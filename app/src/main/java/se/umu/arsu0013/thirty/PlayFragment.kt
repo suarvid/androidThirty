@@ -1,5 +1,6 @@
 package se.umu.arsu0013.thirty
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -13,10 +14,15 @@ import androidx.lifecycle.ViewModelProvider
 import se.umu.arsu0013.thirty.databinding.FragmentRollBinding
 import kotlin.math.max
 
-private const val TAG = "RollFragment"
+private const val TAG = "PlayFragment"
 
 class PlayFragment : Fragment(), AdapterView.OnItemSelectedListener {
 
+    interface Callbacks {
+        fun onGameOver(score: Int)
+    }
+
+    private var callbacks: Callbacks? = null
     private var _binding: FragmentRollBinding? = null
     private val binding get() = _binding!!
     private var playOption: PlayOption =
@@ -34,14 +40,24 @@ class PlayFragment : Fragment(), AdapterView.OnItemSelectedListener {
         }
     }
 
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        callbacks = context as Callbacks?
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+        callbacks = null
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        Log.d(TAG, "RollFragment onCreate() called")
+        Log.d(TAG, "PlayFragment onCreate() called")
     }
 
 
+    //TODO: check if anything should be moved to onCreate instead
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -50,7 +66,7 @@ class PlayFragment : Fragment(), AdapterView.OnItemSelectedListener {
         _binding = FragmentRollBinding.inflate(inflater, container, false)
         val view = binding.root
 
-
+        binding.playSelectSpinner.onItemSelectedListener = this
         /*
         ArrayAdapter.createFromResource(
             requireContext(),
@@ -80,12 +96,12 @@ class PlayFragment : Fragment(), AdapterView.OnItemSelectedListener {
     // TODO: check if there is a more graceful way of doing this
     private fun updateDiceValues() {
         val dice = rollViewModel.dice
-        binding.diceVal0.setImageResource(getDieImageRes(dice[0].first.getFace()))
-        binding.diceVal1.setImageResource(getDieImageRes(dice[1].first.getFace()))
-        binding.diceVal2.setImageResource(getDieImageRes(dice[2].first.getFace()))
-        binding.diceVal3.setImageResource(getDieImageRes(dice[3].first.getFace()))
-        binding.diceVal4.setImageResource(getDieImageRes(dice[4].first.getFace()))
-        binding.diceVal5.setImageResource(getDieImageRes(dice[5].first.getFace()))
+        binding.diceVal0.setImageResource(getDieImageRes(dice[0].die.getFace()))
+        binding.diceVal1.setImageResource(getDieImageRes(dice[1].die.getFace()))
+        binding.diceVal2.setImageResource(getDieImageRes(dice[2].die.getFace()))
+        binding.diceVal3.setImageResource(getDieImageRes(dice[3].die.getFace()))
+        binding.diceVal4.setImageResource(getDieImageRes(dice[4].die.getFace()))
+        binding.diceVal5.setImageResource(getDieImageRes(dice[5].die.getFace()))
     }
 
     private fun getDieImageRes(dieValue: Int): Int {
@@ -105,37 +121,37 @@ class PlayFragment : Fragment(), AdapterView.OnItemSelectedListener {
     private fun updateDiceColors() {
         val dice = rollViewModel.dice
 
-        if (dice[0].second) {
+        if (dice[0].selected) {
             binding.diceVal0.alpha = 1.0f
         } else {
             binding.diceVal0.alpha = 0.5f
         }
 
-        if (dice[1].second) {
+        if (dice[1].selected) {
             binding.diceVal1.alpha = 1.0f
         } else {
             binding.diceVal1.alpha = 0.5f
         }
 
-        if (dice[2].second) {
+        if (dice[2].selected) {
             binding.diceVal2.alpha = 1.0f
         } else {
             binding.diceVal2.alpha = 0.5f
         }
 
-        if (dice[3].second) {
+        if (dice[3].selected) {
             binding.diceVal3.alpha = 1.0f
         } else {
             binding.diceVal3.alpha = 0.5f
         }
 
-        if (dice[4].second) {
+        if (dice[4].selected) {
             binding.diceVal4.alpha = 1.0f
         } else {
             binding.diceVal4.alpha = 0.5f
         }
 
-        if (dice[5].second) {
+        if (dice[5].selected) {
             binding.diceVal5.alpha = 1.0f
         } else {
             binding.diceVal5.alpha = 0.5f
@@ -183,30 +199,43 @@ class PlayFragment : Fragment(), AdapterView.OnItemSelectedListener {
         binding.rollButton.setOnClickListener {
             if (!rollViewModel.roll()) {
                 Toast.makeText(
-                    requireContext(),
+                    this.activity,
                     "Only 3 rolls per turn allowed!",
                     Toast.LENGTH_SHORT
                 ).show()
             } else {
+                if (rollViewModel.user.getRollCount() == 0) { // Have to roll all at start of round
+                    rollViewModel.rollAll()
+                }
                 updateDiceValues()
                 updateRemainingRolls()
+                rollViewModel.resetPlayedDice()
+                binding.playSelectSpinner.isEnabled = true
+                updatePlayOptions()
             }
         }
 
         // TODO: Rename button to playButton and change text
-        binding.selectButton.setOnClickListener {
+        binding.playButton.setOnClickListener {
             Log.d(TAG, "Select button pressed")
+
+            // To keep player from playing different options during the same round
+            binding.playSelectSpinner.isEnabled = false
+
             rollViewModel.user.calculateScore(playOption, rollViewModel.dice)
-            // Placeholder strings would be nice, but using plurals seems overkill
-            rollViewModel.rollAll()
+
             updateCurrentScore()
+            resetRollCount()
             updateRemainingRolls()
-            updatePlayOptions()
+            updateDiceColors()
+            checkGameOver()
+            //updatePlayOptions()
         }
     }
 
     override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
         playOption = parent?.getItemAtPosition(position) as PlayOption
+        Log.d(TAG, "playOption $playOption selected")
     }
 
     override fun onNothingSelected(parent: AdapterView<*>?) {
@@ -214,16 +243,26 @@ class PlayFragment : Fragment(), AdapterView.OnItemSelectedListener {
     }
 
     private fun updateRemainingRolls() {
-        binding.remainingRolls.setText("Remaining rolls: ${max(0,MAX_THROWS - rollViewModel.user.getRollCount())}")
+        binding.remainingRolls.setText("Remaining rolls: ${max(0,MAX_ROLLS - rollViewModel.user.getRollCount())}")
     }
 
     private fun updateCurrentScore() {
         binding.currentScore.setText("Current score: ${rollViewModel.user.getScore()}")
     }
 
+    private fun resetRollCount() {
+        rollViewModel.resetRollCount()
+    }
+
     private fun updatePlayOptions() {
         val adapter = ArrayAdapter(requireContext(), R.layout.support_simple_spinner_dropdown_item, rollViewModel.user.playOptions)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         binding.playSelectSpinner.adapter = adapter
+    }
+
+    private fun checkGameOver() {
+        if (rollViewModel.user.gameIsFinished()) {
+            callbacks?.onGameOver(rollViewModel.user.getScore())
+        }
     }
 }

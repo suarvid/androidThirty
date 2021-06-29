@@ -1,3 +1,3 @@
 package se.umu.arsu0013.thirty
 
-data class Tuple<out A, B>(val first: A, var second: B)
+data class Triple<out A, B, C>(val die: A, var selected: B, var played: C)

@@ -1,20 +1,18 @@
 package se.umu.arsu0013.thirty
 
-import android.widget.Toast
 import androidx.lifecycle.ViewModel
-import kotlin.coroutines.coroutineContext
 
-const val MAX_THROWS = 3
+const val MAX_ROLLS = 3
 
 class RollViewModel: ViewModel() {
 
-     var dice = listOf<Tuple<Die, Boolean>>(
-        Tuple(Die(0), false),
-        Tuple(Die(0), false),
-        Tuple(Die(0), false),
-        Tuple(Die(0), false),
-        Tuple(Die(0), false),
-        Tuple(Die(0), false),
+     var dice = listOf<Triple<Die, Boolean, Boolean>>(
+        Triple(Die(0), false, false),
+        Triple(Die(0), false, false),
+        Triple(Die(0), false, false),
+        Triple(Die(0), false, false),
+        Triple(Die(0), false, false),
+        Triple(Die(0), false, false),
     )
 
     val user = User()
@@ -26,10 +24,10 @@ class RollViewModel: ViewModel() {
 
     fun roll(): Boolean {
         var count = 0
-        if (user.getRollCount() < MAX_THROWS) {
-            this.dice.map { tuple ->
-                if (tuple.second) {
-                    tuple.first.roll()
+        if (user.getRollCount() < MAX_ROLLS) {
+            this.dice.map { triple ->
+                if (triple.selected) {
+                    triple.die.roll()
                     count += 1
                 }
             }
@@ -45,13 +43,23 @@ class RollViewModel: ViewModel() {
     }
 
     fun rollAll() {
-        this.dice.map { tuple ->
-            tuple.first.roll()
+        this.dice.map { triple ->
+            triple.die.roll()
         }
     }
 
-    fun toggleSelect(tuple: Tuple<Die, Boolean>) {
-        tuple.second = !tuple.second
+    fun toggleSelect(triple: Triple<Die, Boolean, Boolean>) {
+        if (!triple.played) {
+            triple.selected = !triple.selected
+        }
+    }
+
+    fun resetRollCount() {
+        user.resetThrowCount()
+    }
+
+    fun resetPlayedDice() {
+        user.resetPlayedDice(this.dice)
     }
 
 }
