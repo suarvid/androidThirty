@@ -35,6 +35,8 @@ class ScoreFragment : Fragment() {
         Log.d(TAG, "ScoreFragment onCreate() called")
     }
 
+    //TODO: Figure out why buttons at the bottom don't work
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -42,7 +44,7 @@ class ScoreFragment : Fragment() {
     ): View? {
         _binding = FragmentScoreBinding.inflate(inflater, container, false)
         val view = binding.root
-        binding.scoreTextView.setText("$finalScore")
+        binding.totalScoreTextView.setText("$finalScore")
         return view
     }
 }
