@@ -21,9 +21,9 @@ class MainActivity : AppCompatActivity(), PlayFragment.Callbacks {
         }
     }
 
-    override fun onGameOver(score: Int) {
-        Log.d(TAG, "Game Over in MainActivity with score $score")
-        val fragment = ScoreFragment.newInstance(score)
+    override fun onGameOver(scores: HashMap<PlayOption, Int>, totalScore: Int) {
+        Log.d(TAG, "Game Over in MainActivity")
+        val fragment = ScoreFragment.newInstance(scores, totalScore)
         supportFragmentManager
             .beginTransaction()
             .replace(R.id.fragment_container, fragment)

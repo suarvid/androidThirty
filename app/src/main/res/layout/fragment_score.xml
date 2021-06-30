@@ -21,7 +21,7 @@
         android:id="@+id/button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Button"
+        android:text="@string/play_again_button"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
@@ -42,6 +42,7 @@ f
             android:gravity="center_horizontal">
 
             <TextView
+                android:id="@+id/low_score_textview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingHorizontal="64dp"
@@ -57,6 +58,7 @@ f
             android:gravity="center_horizontal">
 
             <TextView
+                android:id="@+id/four_score_textview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingHorizontal="64dp"
@@ -72,6 +74,7 @@ f
             android:gravity="center_horizontal">
 
             <TextView
+                android:id="@+id/five_score_textview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingHorizontal="64dp"
@@ -87,6 +90,7 @@ f
             android:gravity="center_horizontal">
 
             <TextView
+                android:id="@+id/six_score_textview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingHorizontal="64dp"
@@ -102,6 +106,7 @@ f
             android:gravity="center_horizontal">
 
             <TextView
+                android:id="@+id/seven_score_textview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingHorizontal="64dp"
@@ -117,6 +122,7 @@ f
             android:gravity="center_horizontal">
 
             <TextView
+                android:id="@+id/eight_score_textview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingHorizontal="64dp"
@@ -132,6 +138,7 @@ f
             android:gravity="center_horizontal">
 
             <TextView
+                android:id="@+id/nine_score_textview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingHorizontal="64dp"
@@ -147,6 +154,7 @@ f
             android:gravity="center_horizontal">
 
             <TextView
+                android:id="@+id/ten_score_textview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingHorizontal="64dp"
@@ -162,6 +170,7 @@ f
             android:gravity="center_horizontal">
 
             <TextView
+                android:id="@+id/eleven_score_textview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingHorizontal="64dp"
@@ -177,6 +186,7 @@ f
             android:gravity="center_horizontal">
 
             <TextView
+                android:id="@+id/twelve_score_textview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingHorizontal="64dp"

@@ -2,8 +2,21 @@
     <string name="app_name">Thirty</string>
     <string name="roll_button">Roll!</string>
     <string name="play_button">Play</string>
-    <string name="current_score">Current Score: </string>
-    <string name="remaining_rolls">Remaining Rolls: </string>
+    <string name="play_again_button">Play Again</string>
+    <string name="current_score">Current Score: %d</string>
+    <string name="remaining_rolls">Remaining Rolls: %d</string>
+    <string name="final_score">Final Score: %d</string>
+    <string name="low_score">Low Score: %d</string>
+    <string name="four_score">Four Score: %d</string>
+    <string name="five_score">Five Score: %d</string>
+    <string name="six_score">Six Score: %d</string>
+    <string name="seven_score">Seven Score: %d</string>
+    <string name="eight_score">Eight Score: %d</string>
+    <string name="nine_score">Nine Score: %d</string>
+    <string name="ten_score">Ten Score: %d</string>
+    <string name="eleven_score">Eleven Score: %d</string>
+    <string name="twelve_score">Twelve Score: %d</string>
+
 
     <string-array name="play_options_array">
         <item>Low</item>

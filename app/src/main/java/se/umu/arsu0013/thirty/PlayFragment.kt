@@ -11,7 +11,7 @@ import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import se.umu.arsu0013.thirty.databinding.FragmentRollBinding
+import se.umu.arsu0013.thirty.databinding.FragmentPlayBinding
 import kotlin.math.max
 
 private const val TAG = "PlayFragment"
@@ -19,11 +19,11 @@ private const val TAG = "PlayFragment"
 class PlayFragment : Fragment(), AdapterView.OnItemSelectedListener {
 
     interface Callbacks {
-        fun onGameOver(score: Int)
+        fun onGameOver(scores: HashMap<PlayOption, Int>, totalScore: Int)
     }
 
     private var callbacks: Callbacks? = null
-    private var _binding: FragmentRollBinding? = null
+    private var _binding: FragmentPlayBinding? = null
     private val binding get() = _binding!!
     private var playOption: PlayOption =
         PlayOption.LOW // Should match the initial selection of the Spinner
@@ -63,26 +63,17 @@ class PlayFragment : Fragment(), AdapterView.OnItemSelectedListener {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        _binding = FragmentRollBinding.inflate(inflater, container, false)
+        _binding = FragmentPlayBinding.inflate(inflater, container, false)
         val view = binding.root
 
         binding.playSelectSpinner.onItemSelectedListener = this
-        /*
-        ArrayAdapter.createFromResource(
-            requireContext(),
-            R.array.play_options_array,
-            android.R.layout.simple_spinner_item
-        ).also { adapter ->
-            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-            binding.playSelectSpinner.adapter = adapter
-        }
-        */
 
         setOnClickListeners()
         updateDiceValues()
         updateDiceColors()
         updateRemainingRolls()
         updatePlayOptions()
+        updateCurrentScore()
         return view
     }
 
@@ -215,9 +206,8 @@ class PlayFragment : Fragment(), AdapterView.OnItemSelectedListener {
             }
         }
 
-        // TODO: Rename button to playButton and change text
         binding.playButton.setOnClickListener {
-            Log.d(TAG, "Select button pressed")
+            Log.d(TAG, "Play button pressed")
 
             // To keep player from playing different options during the same round
             binding.playSelectSpinner.isEnabled = false
@@ -225,11 +215,9 @@ class PlayFragment : Fragment(), AdapterView.OnItemSelectedListener {
             rollViewModel.user.calculateScore(playOption, rollViewModel.dice)
 
             updateCurrentScore()
-            resetRollCount()
             updateRemainingRolls()
             updateDiceColors()
             checkGameOver()
-            //updatePlayOptions()
         }
     }
 
@@ -242,12 +230,15 @@ class PlayFragment : Fragment(), AdapterView.OnItemSelectedListener {
         TODO("Not yet implemented") // check when this is called
     }
 
+    //TODO: Change to string resources instead
     private fun updateRemainingRolls() {
-        binding.remainingRolls.setText("Remaining rolls: ${max(0,MAX_ROLLS - rollViewModel.user.getRollCount())}")
+        binding.remainingRolls.text = getString(R.string.remaining_rolls, max(0, MAX_ROLLS - rollViewModel.user.getRollCount()))
+        //binding.remainingRolls.setText("Remaining rolls: ${max(0,MAX_ROLLS - rollViewModel.user.getRollCount())}")
     }
 
     private fun updateCurrentScore() {
-        binding.currentScore.setText("Current score: ${rollViewModel.user.getScore()}")
+        binding.currentScore.text = getString(R.string.current_score, rollViewModel.user.getTotalScore())
+        //binding.currentScore.setText("Current score: ${rollViewModel.user.getTotalScore()}")
     }
 
     private fun resetRollCount() {
@@ -262,7 +253,7 @@ class PlayFragment : Fragment(), AdapterView.OnItemSelectedListener {
 
     private fun checkGameOver() {
         if (rollViewModel.user.gameIsFinished()) {
-            callbacks?.onGameOver(rollViewModel.user.getScore())
+            callbacks?.onGameOver(rollViewModel.user.getScores(), rollViewModel.user.getTotalScore())
         }
     }
 }
