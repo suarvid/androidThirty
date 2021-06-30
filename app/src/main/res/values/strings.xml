@@ -16,6 +16,10 @@
     <string name="ten_score">Ten Score: %d</string>
     <string name="eleven_score">Eleven Score: %d</string>
     <string name="twelve_score">Twelve Score: %d</string>
+    <string name="play_start_button">Play</string>
+    <string name="about_button">About</string>
+    <string name="quit_button">Quit</string>
+    <string name="title">THIRTY</string>
 
 
     <string-array name="play_options_array">

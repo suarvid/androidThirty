@@ -1,5 +1,6 @@
 package se.umu.arsu0013.thirty
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -36,6 +37,27 @@ class ScoreFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Log.d(TAG, "ScoreFragment onCreate() called")
+    }
+
+    //TODO: Figure out why buttons at the bottom don't work
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = FragmentScoreBinding.inflate(inflater, container, false)
+        val view = binding.root
+        // TODO: Maybe do two rows beneath in onCreate instead
+        scores = arguments?.getSerializable(ARG_PLAY_OPTION_SCORES) as HashMap<PlayOption, Int>
+        finalScore = arguments?.getInt(ARG_FINAL_SCORE)
+        updateScoreTexts()
+
+        // this is a bit scuffed, but muy simplicito
+        binding.playAgainButton.setOnClickListener {
+            val intent = Intent(activity, MainActivity::class.java)
+            activity?.startActivity(intent)
+        }
+        return view
     }
 
 
@@ -75,18 +97,4 @@ class ScoreFragment : Fragment() {
         binding.totalScoreTextView.text = getString(R.string.final_score, finalScore)
     }
 
-    //TODO: Figure out why buttons at the bottom don't work
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        _binding = FragmentScoreBinding.inflate(inflater, container, false)
-        val view = binding.root
-        // TODO: Maybe do two rows beneath in onCreate instead
-        scores = arguments?.getSerializable(ARG_PLAY_OPTION_SCORES) as HashMap<PlayOption, Int>
-        finalScore = arguments?.getInt(ARG_FINAL_SCORE)
-        updateScoreTexts()
-        return view
-    }
 }

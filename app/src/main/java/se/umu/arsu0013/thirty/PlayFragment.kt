@@ -18,11 +18,11 @@ private const val TAG = "PlayFragment"
 
 class PlayFragment : Fragment(), AdapterView.OnItemSelectedListener {
 
-    interface Callbacks {
+    interface PlayCallbacks {
         fun onGameOver(scores: HashMap<PlayOption, Int>, totalScore: Int)
     }
 
-    private var callbacks: Callbacks? = null
+    private var callbacks: PlayCallbacks? = null
     private var _binding: FragmentPlayBinding? = null
     private val binding get() = _binding!!
     private var playOption: PlayOption =
@@ -42,7 +42,7 @@ class PlayFragment : Fragment(), AdapterView.OnItemSelectedListener {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        callbacks = context as Callbacks?
+        callbacks = context as PlayCallbacks?
     }
 
     override fun onDetach() {
@@ -97,14 +97,14 @@ class PlayFragment : Fragment(), AdapterView.OnItemSelectedListener {
 
     private fun getDieImageRes(dieValue: Int): Int {
         when(dieValue) {
-            1 -> return R.drawable.red1
-            2 -> return R.drawable.red2
-            3 -> return R.drawable.red3
-            4 -> return R.drawable.red4
-            5 -> return R.drawable.red5
-            6 -> return R.drawable.red6
+            1 -> return R.drawable.die_1
+            2 -> return R.drawable.die_2
+            3 -> return R.drawable.die_3
+            4 -> return R.drawable.die_4
+            5 -> return R.drawable.die_5
+            6 -> return R.drawable.die_6
         }
-        return R.drawable.red1
+        return R.drawable.die_1
     }
 
 
@@ -195,9 +195,9 @@ class PlayFragment : Fragment(), AdapterView.OnItemSelectedListener {
                     Toast.LENGTH_SHORT
                 ).show()
             } else {
-                if (rollViewModel.user.getRollCount() == 0) { // Have to roll all at start of round
+                /*if (rollViewModel.user.getRollCount() == 0) { // Have to roll all at start of round
                     rollViewModel.rollAll()
-                }
+                }*/
                 updateDiceValues()
                 updateRemainingRolls()
                 rollViewModel.resetPlayedDice()
@@ -212,8 +212,12 @@ class PlayFragment : Fragment(), AdapterView.OnItemSelectedListener {
             // To keep player from playing different options during the same round
             binding.playSelectSpinner.isEnabled = false
 
-            rollViewModel.user.calculateScore(playOption, rollViewModel.dice)
+            if (rollViewModel.calculateScore(playOption)) {
+                updatePlayOptions()
+                binding.playSelectSpinner.isEnabled = true
+            }
 
+            updateDiceValues()
             updateCurrentScore()
             updateRemainingRolls()
             updateDiceColors()
@@ -241,9 +245,6 @@ class PlayFragment : Fragment(), AdapterView.OnItemSelectedListener {
         //binding.currentScore.setText("Current score: ${rollViewModel.user.getTotalScore()}")
     }
 
-    private fun resetRollCount() {
-        rollViewModel.resetRollCount()
-    }
 
     private fun updatePlayOptions() {
         val adapter = ArrayAdapter(requireContext(), R.layout.support_simple_spinner_dropdown_item, rollViewModel.user.playOptions)

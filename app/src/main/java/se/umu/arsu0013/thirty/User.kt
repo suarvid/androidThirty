@@ -14,14 +14,13 @@ class User(val name: String = "Player") {
         PlayOption.LOW,
         PlayOption.FOUR,
         PlayOption.FIVE,
-        /*
         PlayOption.SIX,
         PlayOption.SEVEN,
         PlayOption.EIGHT,
         PlayOption.NINE,
         PlayOption.TEN,
         PlayOption.ELEVEN,
-        PlayOption.TWELVE*/
+        PlayOption.TWELVE
     )
 
     fun incrementThrowCount() {
@@ -32,7 +31,7 @@ class User(val name: String = "Player") {
         rollCount = 0
     }
 
-    fun calculateScore(playOption: PlayOption, dice: List<Triple<Die, Boolean, Boolean>>) {
+    fun calculateScore(playOption: PlayOption, dice: List<Triple<Die, Boolean, Boolean>>): Boolean {
 
         playsLeft = false
         if (playOption == PlayOption.LOW) { // Edge case, easy to auto-compute, bit ugly though
@@ -58,7 +57,9 @@ class User(val name: String = "Player") {
             resetThrowCount() // Maybe this can stay
             this.playOptions.remove(playOption)
             Log.d(TAG, "No plays left for play option $playOption")
+            return true
         }
+        return false
     }
 
 
@@ -84,6 +85,7 @@ class User(val name: String = "Player") {
     }
 
     // For calculating possible combinations that yield the sought sum
+    // Based on top comment in https://stackoverflow.com/questions/4632322/finding-all-possible-combinations-of-numbers-to-reach-a-given-sum
     private fun subsetSum(numbers: List<Int>, target: Int, partial: List<Int>): List<Int> {
         Log.d(TAG, "subsetSum called")
         val partialSums = mutableListOf<Int>()
@@ -95,10 +97,6 @@ class User(val name: String = "Player") {
             playsLeft = true
         }
 
-        // maybe unnecessary
-        if (partialSum > target) {
-
-        }
 
         for (i in numbers.indices) {
             val n = numbers[i]

@@ -54,12 +54,19 @@ class RollViewModel: ViewModel() {
         }
     }
 
-    fun resetRollCount() {
-        user.resetThrowCount()
-    }
 
     fun resetPlayedDice() {
         user.resetPlayedDice(this.dice)
+    }
+
+    fun calculateScore(playOption: PlayOption): Boolean {
+        if (user.calculateScore(playOption, dice)) {
+            rollAll()
+            resetPlayedDice()
+            return true
+        }
+
+        return false
     }
 
 }
