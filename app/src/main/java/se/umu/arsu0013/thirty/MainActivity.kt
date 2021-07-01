@@ -1,15 +1,15 @@
 package se.umu.arsu0013.thirty
 
-import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 
-//TODO: Make sure state (like selected die) is maintained through rotations
+
 private const val TAG = "MainActivity"
 class MainActivity : AppCompatActivity(), PlayFragment.PlayCallbacks, StartFragment.StartCallbacks {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        Log.d(TAG, "onCreate called")
         setContentView(R.layout.activity_main)
 
         val currentFragment = supportFragmentManager.findFragmentById(R.id.fragment_container)
@@ -20,6 +20,27 @@ class MainActivity : AppCompatActivity(), PlayFragment.PlayCallbacks, StartFragm
                 .add(R.id.fragment_container, fragment)
                 .commit()
         }
+    }
+
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        Log.d(TAG, "onSaveInstanceState called")
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+        Log.d(TAG, "onRestoreInstanceState called")
+    }
+
+    override fun onStop() {
+        super.onStop()
+        Log.d(TAG, "onStop called")
+    }
+
+    override fun onPause() {
+        super.onPause()
+        Log.d(TAG, "onPause called")
     }
 
     override fun onPlay() {

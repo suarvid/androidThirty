@@ -15,6 +15,17 @@ import se.umu.arsu0013.thirty.databinding.FragmentPlayBinding
 import kotlin.math.max
 
 private const val TAG = "PlayFragment"
+private const val ARG_TEST_VAL = "test_val"
+private const val ARG_VIEW_MODEL = "view_model"
+private const val ARG_DIE_VAL_1 = "die_1"
+private const val ARG_DIE_VAL_2 = "die_2"
+private const val ARG_DIE_VAL_3 = "die_3"
+private const val ARG_DIE_VAL_4 = "die_4"
+private const val ARG_DIE_VAL_5 = "die_5"
+private const val ARG_DIE_VAL_6 = "die_6"
+private const val ARG_ROLL_COUNT = "rolls_remaining"
+private const val ARG_TOTAL_SCORE = "total_score"
+private const val ARG_REMAINING_PLAY_OPTIONS = "play_options"
 
 class PlayFragment : Fragment(), AdapterView.OnItemSelectedListener {
 
@@ -83,20 +94,99 @@ class PlayFragment : Fragment(), AdapterView.OnItemSelectedListener {
         _binding = null
     }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        Log.d(TAG, "onSaveInstanceState called")
+        outState.putInt(ARG_TEST_VAL, 1337)
+        outState.putInt(ARG_DIE_VAL_1, rollViewModel.dice[0].die.face)
+        outState.putInt(ARG_DIE_VAL_2, rollViewModel.dice[1].die.face)
+        outState.putInt(ARG_DIE_VAL_3, rollViewModel.dice[2].die.face)
+        outState.putInt(ARG_DIE_VAL_4, rollViewModel.dice[3].die.face)
+        outState.putInt(ARG_DIE_VAL_5, rollViewModel.dice[4].die.face)
+        outState.putInt(ARG_DIE_VAL_6, rollViewModel.dice[5].die.face)
+        outState.putInt(ARG_TOTAL_SCORE, rollViewModel.user.totalScore)
+        outState.putInt(ARG_ROLL_COUNT, rollViewModel.user.rollCount)
+
+        //TODO: Figure out why this causes a crash
+        val playOptionValues = arrayListOf<Int>()
+        for (i in rollViewModel.user.playOptions.indices) {
+            Log.d(TAG, "in onSaveInstanceState loop")
+            playOptionValues.add(rollViewModel.user.playOptions[i].goalSum)
+        }
+        outState.putIntegerArrayList(ARG_REMAINING_PLAY_OPTIONS, playOptionValues)
+    }
+
+    override fun onViewStateRestored(savedInstanceState: Bundle?) {
+        super.onViewStateRestored(savedInstanceState)
+        Log.d(TAG, "onViewStateRestored called")
+        val testInt = savedInstanceState?.getInt(ARG_TEST_VAL)
+
+        restoreDiceValues(savedInstanceState)
+        restorePlayOptions(savedInstanceState)
+        rollViewModel.user.totalScore = savedInstanceState?.getInt(ARG_TOTAL_SCORE) ?: 0
+        rollViewModel.user.rollCount = savedInstanceState?.getInt(ARG_ROLL_COUNT) ?: 0
+        updatePlayOptions()
+        updateDiceValues()
+        updateCurrentScore()
+        updateRemainingRolls()
+        Log.d(TAG, "Retrieved Int with value $testInt")
+    }
+
+    private fun restorePlayOptions(savedInstanceState: Bundle?) {
+        val playOptionValues =
+            savedInstanceState?.getIntegerArrayList(ARG_REMAINING_PLAY_OPTIONS) ?: listOf(
+                PlayOption.LOW.goalSum,
+                PlayOption.FOUR.goalSum,
+                PlayOption.FIVE.goalSum,
+                PlayOption.SIX.goalSum,
+                PlayOption.SEVEN.goalSum,
+                PlayOption.EIGHT.goalSum,
+                PlayOption.NINE.goalSum,
+                PlayOption.TEN.goalSum,
+                PlayOption.ELEVEN.goalSum,
+                PlayOption.TWELVE.goalSum
+            )
+        val restored = mutableListOf<PlayOption>()
+        playOptionValues.forEach { value ->
+            when (value) {
+                PlayOption.LOW.goalSum -> restored.add(PlayOption.LOW)
+                PlayOption.FOUR.goalSum -> restored.add(PlayOption.FOUR)
+                PlayOption.FIVE.goalSum -> restored.add(PlayOption.FIVE)
+                PlayOption.SIX.goalSum -> restored.add(PlayOption.SIX)
+                PlayOption.SEVEN.goalSum -> restored.add(PlayOption.SEVEN)
+                PlayOption.EIGHT.goalSum -> restored.add(PlayOption.EIGHT)
+                PlayOption.NINE.goalSum -> restored.add(PlayOption.NINE)
+                PlayOption.TEN.goalSum -> restored.add(PlayOption.TEN)
+                PlayOption.ELEVEN.goalSum -> restored.add(PlayOption.ELEVEN)
+                PlayOption.TWELVE.goalSum -> restored.add(PlayOption.TWELVE)
+            }
+        }
+        rollViewModel.user.playOptions = restored
+    }
+
+    private fun restoreDiceValues(savedInstanceState: Bundle?) {
+        this.rollViewModel.dice[0].die.face = savedInstanceState?.getInt(ARG_DIE_VAL_1) ?: (1..6).random()
+        this.rollViewModel.dice[1].die.face = savedInstanceState?.getInt(ARG_DIE_VAL_2) ?: (1..6).random()
+        this.rollViewModel.dice[2].die.face = savedInstanceState?.getInt(ARG_DIE_VAL_3) ?: (1..6).random()
+        this.rollViewModel.dice[3].die.face = savedInstanceState?.getInt(ARG_DIE_VAL_4) ?: (1..6).random()
+        this.rollViewModel.dice[4].die.face = savedInstanceState?.getInt(ARG_DIE_VAL_5) ?: (1..6).random()
+        this.rollViewModel.dice[5].die.face = savedInstanceState?.getInt(ARG_DIE_VAL_6) ?: (1..6).random()
+    }
+
 
     // TODO: check if there is a more graceful way of doing this
     private fun updateDiceValues() {
         val dice = rollViewModel.dice
-        binding.diceVal0.setImageResource(getDieImageRes(dice[0].die.getFace()))
-        binding.diceVal1.setImageResource(getDieImageRes(dice[1].die.getFace()))
-        binding.diceVal2.setImageResource(getDieImageRes(dice[2].die.getFace()))
-        binding.diceVal3.setImageResource(getDieImageRes(dice[3].die.getFace()))
-        binding.diceVal4.setImageResource(getDieImageRes(dice[4].die.getFace()))
-        binding.diceVal5.setImageResource(getDieImageRes(dice[5].die.getFace()))
+        binding.diceVal0.setImageResource(getDieImageRes(dice[0].die.face))
+        binding.diceVal1.setImageResource(getDieImageRes(dice[1].die.face))
+        binding.diceVal2.setImageResource(getDieImageRes(dice[2].die.face))
+        binding.diceVal3.setImageResource(getDieImageRes(dice[3].die.face))
+        binding.diceVal4.setImageResource(getDieImageRes(dice[4].die.face))
+        binding.diceVal5.setImageResource(getDieImageRes(dice[5].die.face))
     }
 
     private fun getDieImageRes(dieValue: Int): Int {
-        when(dieValue) {
+        when (dieValue) {
             1 -> return R.drawable.die_1
             2 -> return R.drawable.die_2
             3 -> return R.drawable.die_3
@@ -108,7 +198,7 @@ class PlayFragment : Fragment(), AdapterView.OnItemSelectedListener {
     }
 
 
-    // TODO: This is kind of ugly, but have not found a good way to loop and keep track of bindings
+    //This is kind of ugly, but have not found a good way to loop and keep track of bindings
     private fun updateDiceColors() {
         val dice = rollViewModel.dice
 
@@ -195,9 +285,7 @@ class PlayFragment : Fragment(), AdapterView.OnItemSelectedListener {
                     Toast.LENGTH_SHORT
                 ).show()
             } else {
-                /*if (rollViewModel.user.getRollCount() == 0) { // Have to roll all at start of round
-                    rollViewModel.rollAll()
-                }*/
+
                 updateDiceValues()
                 updateRemainingRolls()
                 rollViewModel.resetPlayedDice()
@@ -231,30 +319,33 @@ class PlayFragment : Fragment(), AdapterView.OnItemSelectedListener {
     }
 
     override fun onNothingSelected(parent: AdapterView<*>?) {
-        TODO("Not yet implemented") // check when this is called
+        TODO("Not yet implemented") // is never really called
     }
 
-    //TODO: Change to string resources instead
+
     private fun updateRemainingRolls() {
-        binding.remainingRolls.text = getString(R.string.remaining_rolls, max(0, MAX_ROLLS - rollViewModel.user.getRollCount()))
-        //binding.remainingRolls.setText("Remaining rolls: ${max(0,MAX_ROLLS - rollViewModel.user.getRollCount())}")
+        binding.remainingRolls.text =
+            getString(R.string.remaining_rolls, max(0, MAX_ROLLS - rollViewModel.user.rollCount))
     }
 
     private fun updateCurrentScore() {
-        binding.currentScore.text = getString(R.string.current_score, rollViewModel.user.getTotalScore())
-        //binding.currentScore.setText("Current score: ${rollViewModel.user.getTotalScore()}")
+        binding.currentScore.text = getString(R.string.current_score, rollViewModel.user.totalScore)
     }
 
 
     private fun updatePlayOptions() {
-        val adapter = ArrayAdapter(requireContext(), R.layout.support_simple_spinner_dropdown_item, rollViewModel.user.playOptions)
+        val adapter = ArrayAdapter(
+            requireContext(),
+            R.layout.support_simple_spinner_dropdown_item,
+            rollViewModel.user.playOptions
+        )
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         binding.playSelectSpinner.adapter = adapter
     }
 
     private fun checkGameOver() {
         if (rollViewModel.user.gameIsFinished()) {
-            callbacks?.onGameOver(rollViewModel.user.getScores(), rollViewModel.user.getTotalScore())
+            callbacks?.onGameOver(rollViewModel.user.getScores(), rollViewModel.user.totalScore)
         }
     }
 }

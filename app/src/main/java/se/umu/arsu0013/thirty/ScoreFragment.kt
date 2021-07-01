@@ -39,7 +39,7 @@ class ScoreFragment : Fragment() {
         Log.d(TAG, "ScoreFragment onCreate() called")
     }
 
-    //TODO: Figure out why buttons at the bottom don't work
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -47,7 +47,6 @@ class ScoreFragment : Fragment() {
     ): View {
         _binding = FragmentScoreBinding.inflate(inflater, container, false)
         val view = binding.root
-        // TODO: Maybe do two rows beneath in onCreate instead
         scores = arguments?.getSerializable(ARG_PLAY_OPTION_SCORES) as HashMap<PlayOption, Int>
         finalScore = arguments?.getInt(ARG_FINAL_SCORE)
         updateScoreTexts()

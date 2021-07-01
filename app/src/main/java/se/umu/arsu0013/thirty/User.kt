@@ -5,14 +5,14 @@ import android.util.Log
 private const val TAG = "User"
 
 class User(val name: String = "Player") {
-    private var totalScore: Int = 0
+    var totalScore: Int = 0
     private var scores: HashMap<PlayOption, Int> = HashMap(10)
-    private var rollCount: Int = 0
+    var rollCount: Int = 0
     private var playsLeft: Boolean =
         false // Flag variable, is set to true if any play is possible with selected option
     var playOptions = mutableListOf(
         PlayOption.LOW,
-        PlayOption.FOUR,
+       /* PlayOption.FOUR,
         PlayOption.FIVE,
         PlayOption.SIX,
         PlayOption.SEVEN,
@@ -20,7 +20,7 @@ class User(val name: String = "Player") {
         PlayOption.NINE,
         PlayOption.TEN,
         PlayOption.ELEVEN,
-        PlayOption.TWELVE
+        PlayOption.TWELVE */
     )
 
     fun incrementThrowCount() {
@@ -120,7 +120,7 @@ class User(val name: String = "Player") {
         val values = mutableListOf<Int>()
         for (triple in dice) {
             if (!triple.played) {
-                values.add(triple.die.getFace())
+                values.add(triple.die.face)
             }
         }
         return values
@@ -132,12 +132,11 @@ class User(val name: String = "Player") {
 
     // TODO: Add check for finished game
     // TODO: Add starting page with buttons for play, instructions, maybe settings/quit or smthn
-
     private fun calculateSumSelected(dice: List<Triple<Die, Boolean, Boolean>>): Int {
         var runningSum = 0
         for (triple in dice) {
             if (triple.selected) {
-                runningSum += triple.die.getFace()
+                runningSum += triple.die.face
                 triple.played = true
             }
         }
@@ -159,23 +158,17 @@ class User(val name: String = "Player") {
         }
     }
 
-    fun getTotalScore(): Int {
-        return this.totalScore
-    }
 
     fun getScores(): HashMap<PlayOption, Int> {
         return this.scores
     }
 
-    fun getRollCount(): Int {
-        return this.rollCount
-    }
 
     private fun calculateLowScore(dice: List<Triple<Die, Boolean, Boolean>>): Int {
         var sum = 0
         for (triple in dice) {
-            if (triple.selected && triple.die.getFace() <= 3) {
-                sum += triple.die.getFace()
+            if (triple.selected && triple.die.face <= 3) {
+                sum += triple.die.face
             }
         }
         return sum

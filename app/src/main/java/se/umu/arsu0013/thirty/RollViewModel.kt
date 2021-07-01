@@ -1,12 +1,13 @@
 package se.umu.arsu0013.thirty
 
+
 import androidx.lifecycle.ViewModel
 
 const val MAX_ROLLS = 3
 
-class RollViewModel: ViewModel() {
+class RollViewModel : ViewModel() {
 
-     var dice = listOf<Triple<Die, Boolean, Boolean>>(
+     var dice = listOf(
         Triple(Die(0), false, false),
         Triple(Die(0), false, false),
         Triple(Die(0), false, false),
@@ -24,7 +25,7 @@ class RollViewModel: ViewModel() {
 
     fun roll(): Boolean {
         var count = 0
-        if (user.getRollCount() < MAX_ROLLS) {
+        if (user.rollCount < MAX_ROLLS) {
             this.dice.map { triple ->
                 if (triple.selected) {
                     triple.die.roll()
@@ -65,7 +66,6 @@ class RollViewModel: ViewModel() {
             resetPlayedDice()
             return true
         }
-
         return false
     }
 

@@ -1,6 +1,7 @@
 package se.umu.arsu0013.thirty
 
-data class Die(private var face: Int) {
+// TODO: Maybe change from the Triples to Die by implementing their behaviour here instead
+data class Die(var face: Int) {
 
     init {
         roll()
@@ -8,9 +9,5 @@ data class Die(private var face: Int) {
 
     fun roll() {
         this.face = (1..6).random()
-    }
-
-    fun getFace(): Int {
-        return this.face
     }
 }
