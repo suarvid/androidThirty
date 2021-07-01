@@ -3,19 +3,11 @@ package se.umu.arsu0013.thirty
 
 import androidx.lifecycle.ViewModel
 
-const val MAX_ROLLS = 3
+const val MAX_ROLLS = 2
 
-class RollViewModel : ViewModel() {
+class PlayViewModel : ViewModel() {
 
-     var dice = listOf(
-        Triple(Die(0), false, false),
-        Triple(Die(0), false, false),
-        Triple(Die(0), false, false),
-        Triple(Die(0), false, false),
-        Triple(Die(0), false, false),
-        Triple(Die(0), false, false),
-    )
-
+    var dice = listOf(Die(), Die(), Die(), Die(), Die(), Die())
     val user = User()
 
     init {
@@ -26,9 +18,9 @@ class RollViewModel : ViewModel() {
     fun roll(): Boolean {
         var count = 0
         if (user.rollCount < MAX_ROLLS) {
-            this.dice.map { triple ->
-                if (triple.selected) {
-                    triple.die.roll()
+            this.dice.map { die ->
+                if (die.selected) {
+                    die.roll()
                     count += 1
                 }
             }
@@ -43,15 +35,15 @@ class RollViewModel : ViewModel() {
         return false
     }
 
-    fun rollAll() {
-        this.dice.map { triple ->
-            triple.die.roll()
+    private fun rollAll() {
+        this.dice.map { die ->
+            die.roll()
         }
     }
 
-    fun toggleSelect(triple: Triple<Die, Boolean, Boolean>) {
-        if (!triple.played) {
-            triple.selected = !triple.selected
+    fun toggleSelect(die: Die) {
+        if (!die.played) {
+            die.selected = !die.selected
         }
     }
 

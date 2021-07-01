@@ -11,8 +11,9 @@ import se.umu.arsu0013.thirty.databinding.FragmentStartScreenBinding
 
 private const val TAG = "StartFragment"
 
-class StartFragment: Fragment() {
+class StartFragment : Fragment() {
 
+    // callBack interface to communicate with hosting Activity
     interface StartCallbacks {
         fun onPlay()
         fun onAbout()
@@ -48,7 +49,7 @@ class StartFragment: Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentStartScreenBinding.inflate(inflater, container, false)
         val view = binding.root
         setOnClickListeners()

@@ -6,6 +6,7 @@ import android.util.Log
 
 
 private const val TAG = "MainActivity"
+
 class MainActivity : AppCompatActivity(), PlayFragment.PlayCallbacks, StartFragment.StartCallbacks {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

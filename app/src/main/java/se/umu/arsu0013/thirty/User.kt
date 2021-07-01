@@ -10,28 +10,20 @@ class User(val name: String = "Player") {
     var rollCount: Int = 0
     private var playsLeft: Boolean =
         false // Flag variable, is set to true if any play is possible with selected option
-    var playOptions = mutableListOf(
-        PlayOption.LOW,
-       /* PlayOption.FOUR,
-        PlayOption.FIVE,
-        PlayOption.SIX,
-        PlayOption.SEVEN,
-        PlayOption.EIGHT,
-        PlayOption.NINE,
-        PlayOption.TEN,
-        PlayOption.ELEVEN,
-        PlayOption.TWELVE */
-    )
+
+    //this list is filled in PlayFragment's restorePlayOptions()
+    // by using playOptionGoalSums() in this class
+    var playOptions = mutableListOf<PlayOption>()
 
     fun incrementThrowCount() {
         rollCount += 1
     }
 
-    fun resetThrowCount() {
+    private fun resetThrowCount() {
         rollCount = 0
     }
 
-    fun calculateScore(playOption: PlayOption, dice: List<Triple<Die, Boolean, Boolean>>): Boolean {
+    fun calculateScore(playOption: PlayOption, dice: List<Die>): Boolean {
 
         playsLeft = false
         if (playOption == PlayOption.LOW) { // Edge case, easy to auto-compute, bit ugly though
@@ -64,7 +56,7 @@ class User(val name: String = "Player") {
 
 
     private fun arePlaysRemaining(
-        dice: List<Triple<Die, Boolean, Boolean>>,
+        dice: List<Die>,
         playOption: PlayOption
     ) {
         val playableValues = getPlayableValues(dice)
@@ -116,11 +108,11 @@ class User(val name: String = "Player") {
         return sum
     }
 
-    private fun getPlayableValues(dice: List<Triple<Die, Boolean, Boolean>>): MutableList<Int> {
+    private fun getPlayableValues(dice: List<Die>): MutableList<Int> {
         val values = mutableListOf<Int>()
-        for (triple in dice) {
-            if (!triple.played) {
-                values.add(triple.die.face)
+        for (die in dice) {
+            if (!die.played) {
+                values.add(die.face)
             }
         }
         return values
@@ -130,31 +122,29 @@ class User(val name: String = "Player") {
         return this.playOptions.isEmpty()
     }
 
-    // TODO: Add check for finished game
-    // TODO: Add starting page with buttons for play, instructions, maybe settings/quit or smthn
-    private fun calculateSumSelected(dice: List<Triple<Die, Boolean, Boolean>>): Int {
+    private fun calculateSumSelected(dice: List<Die>): Int {
         var runningSum = 0
-        for (triple in dice) {
-            if (triple.selected) {
-                runningSum += triple.die.face
-                triple.played = true
+        for (die in dice) {
+            if (die.selected) {
+                runningSum += die.face
+                die.played = true
             }
         }
         return runningSum
     }
 
-    private fun setPlayedDice(dice: List<Triple<Die, Boolean, Boolean>>) {
-        for (triple in dice) {
-            if (triple.selected) {
-                triple.played = true
-                triple.selected = false
+    private fun setPlayedDice(dice: List<Die>) {
+        for (die in dice) {
+            if (die.selected) {
+                die.played = true
+                die.selected = false
             }
         }
     }
 
-    fun resetPlayedDice(dice: List<Triple<Die, Boolean, Boolean>>) {
-        for (triple in dice) {
-            triple.played = false
+    fun resetPlayedDice(dice: List<Die>) {
+        for (die in dice) {
+            die.played = false
         }
     }
 
@@ -164,13 +154,29 @@ class User(val name: String = "Player") {
     }
 
 
-    private fun calculateLowScore(dice: List<Triple<Die, Boolean, Boolean>>): Int {
+    private fun calculateLowScore(dice: List<Die>): Int {
         var sum = 0
-        for (triple in dice) {
-            if (triple.selected && triple.die.face <= 3) {
-                sum += triple.die.face
+        for (die in dice) {
+            if (die.selected && die.face <= 3) {
+                sum += die.face
             }
         }
         return sum
+    }
+
+    fun playOptionGoalSums(): List<Int> {
+        return listOf(
+            PlayOption.LOW.goalSum,
+            PlayOption.FOUR.goalSum,
+            PlayOption.FIVE.goalSum,
+            PlayOption.SIX.goalSum,
+            PlayOption.SEVEN.goalSum,
+            PlayOption.EIGHT.goalSum,
+            PlayOption.NINE.goalSum,
+            PlayOption.TEN.goalSum,
+            PlayOption.ELEVEN.goalSum,
+            PlayOption.TWELVE.goalSum
+        )
+
     }
 }

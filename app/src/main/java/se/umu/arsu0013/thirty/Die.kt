@@ -1,7 +1,7 @@
 package se.umu.arsu0013.thirty
 
-// TODO: Maybe change from the Triples to Die by implementing their behaviour here instead
-data class Die(var face: Int) {
+
+data class Die(var face: Int = 0, var selected: Boolean = false, var played: Boolean = false) {
 
     init {
         roll()

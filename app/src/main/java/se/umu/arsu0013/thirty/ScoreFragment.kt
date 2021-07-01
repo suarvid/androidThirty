@@ -51,7 +51,6 @@ class ScoreFragment : Fragment() {
         finalScore = arguments?.getInt(ARG_FINAL_SCORE)
         updateScoreTexts()
 
-        // this is a bit scuffed, but muy simplicito
         binding.playAgainButton.setOnClickListener {
             val intent = Intent(activity, MainActivity::class.java)
             activity?.startActivity(intent)

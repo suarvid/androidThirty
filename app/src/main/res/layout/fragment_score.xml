@@ -19,7 +19,6 @@
         app:layout_constraintVertical_bias="0.071" />
 
 
-
     <Button
         android:id="@+id/play_again_button"
         android:layout_width="wrap_content"
@@ -39,10 +38,11 @@
         app:layout_constraintVertical_bias="0.117"
         tools:layout_editor_absoluteX="0dp">
 
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginVertical="4dp"
+            android:layout_marginVertical="8dp"
             android:gravity="center_horizontal"
             android:orientation="horizontal">
 
@@ -50,14 +50,15 @@
                 android:id="@+id/low_score_textview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:gravity="start"
                 android:text="text"
-                android:textAppearance="@style/TextAppearance.AppCompat.Display1" />
+                android:textAppearance="@style/TextAppearance.AppCompat.Large" />
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginVertical="4dp"
+            android:layout_marginVertical="8dp"
             android:gravity="center_horizontal"
             android:orientation="horizontal">
 
@@ -65,14 +66,15 @@
                 android:id="@+id/four_score_textview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:gravity="start"
                 android:text="text"
-                android:textAppearance="@style/TextAppearance.AppCompat.Display1" />
+                android:textAppearance="@style/TextAppearance.AppCompat.Large" />
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginVertical="4dp"
+            android:layout_marginVertical="8dp"
             android:gravity="center_horizontal"
             android:orientation="horizontal">
 
@@ -80,15 +82,15 @@
                 android:id="@+id/five_score_textview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-
+                android:gravity="start"
                 android:text="text"
-                android:textAppearance="@style/TextAppearance.AppCompat.Display1" />
+                android:textAppearance="@style/TextAppearance.AppCompat.Large" />
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginVertical="4dp"
+            android:layout_marginVertical="8dp"
             android:gravity="center_horizontal"
             android:orientation="horizontal">
 
@@ -97,13 +99,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="text"
-                android:textAppearance="@style/TextAppearance.AppCompat.Display1" />
+                android:gravity="start"
+                android:textAppearance="@style/TextAppearance.AppCompat.Large" />
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginVertical="4dp"
+            android:layout_marginVertical="8dp"
             android:gravity="center_horizontal"
             android:orientation="horizontal">
 
@@ -112,13 +115,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="text"
-                android:textAppearance="@style/TextAppearance.AppCompat.Display1" />
+                android:gravity="start"
+                android:textAppearance="@style/TextAppearance.AppCompat.Large" />
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginVertical="4dp"
+            android:layout_marginVertical="8dp"
             android:gravity="center_horizontal"
             android:orientation="horizontal">
 
@@ -126,15 +130,15 @@
                 android:id="@+id/eight_score_textview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-
+                android:gravity="start"
                 android:text="text"
-                android:textAppearance="@style/TextAppearance.AppCompat.Display1" />
+                android:textAppearance="@style/TextAppearance.AppCompat.Large" />
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginVertical="4dp"
+            android:layout_marginVertical="8dp"
             android:gravity="center_horizontal"
             android:orientation="horizontal">
 
@@ -142,14 +146,15 @@
                 android:id="@+id/nine_score_textview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:gravity="start"
                 android:text="text"
-                android:textAppearance="@style/TextAppearance.AppCompat.Display1" />
+                android:textAppearance="@style/TextAppearance.AppCompat.Large" />
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginVertical="4dp"
+            android:layout_marginVertical="8dp"
             android:gravity="center_horizontal"
             android:orientation="horizontal">
 
@@ -157,14 +162,15 @@
                 android:id="@+id/ten_score_textview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:gravity="start"
                 android:text="text"
-                android:textAppearance="@style/TextAppearance.AppCompat.Display1" />
+                android:textAppearance="@style/TextAppearance.AppCompat.Large" />
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginVertical="4dp"
+            android:layout_marginVertical="8dp"
             android:gravity="center_horizontal"
             android:orientation="horizontal">
 
@@ -172,14 +178,15 @@
                 android:id="@+id/eleven_score_textview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:gravity="start"
                 android:text="text"
-                android:textAppearance="@style/TextAppearance.AppCompat.Display1" />
+                android:textAppearance="@style/TextAppearance.AppCompat.Large" />
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginVertical="4dp"
+            android:layout_marginVertical="8dp"
             android:gravity="center_horizontal"
             android:orientation="horizontal">
 
@@ -187,10 +194,10 @@
                 android:id="@+id/twelve_score_textview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:gravity="start"
                 android:text="text"
-                android:textAppearance="@style/TextAppearance.AppCompat.Display1" />
+                android:textAppearance="@style/TextAppearance.AppCompat.Large" />
         </LinearLayout>
-
 
     </LinearLayout>
 
