@@ -20,7 +20,7 @@
             android:layout_height="wrap_content"
             android:background="@color/transparent"
             android:layout_gravity="center_vertical"
-            android:layout_marginHorizontal="16dp"
+            android:layout_marginHorizontal="4dp"
             android:src="@drawable/die_1" />
 
         <ImageButton
@@ -28,7 +28,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@color/transparent"
-            android:layout_marginHorizontal="16dp"
+            android:layout_marginHorizontal="4dp"
             android:src="@drawable/die_2" />
 
         <ImageButton
@@ -36,7 +36,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@color/transparent"
-            android:layout_marginHorizontal="16dp"
+            android:layout_marginHorizontal="4dp"
             android:src="@drawable/die_3" />
 
         <Button
@@ -45,7 +45,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:layout_marginHorizontal="16dp"
+            android:layout_marginHorizontal="8dp"
             android:text="@string/roll_button" />
 
         <TextView
@@ -69,7 +69,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@color/transparent"
-            android:layout_marginHorizontal="16dp"
+            android:layout_marginHorizontal="4dp"
             android:src="@drawable/die_4" />
 
         <ImageButton
@@ -77,7 +77,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@color/transparent"
-            android:layout_marginHorizontal="16dp"
+            android:layout_marginHorizontal="4dp"
             android:src="@drawable/die_5" />
 
         <ImageButton
@@ -85,14 +85,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@color/transparent"
-            android:layout_marginHorizontal="16dp"
+            android:layout_marginHorizontal="4dp"
             android:src="@drawable/die_6" />
 
         <Spinner
             android:id="@+id/play_select_spinner"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="32dp"
+            android:layout_marginHorizontal="16dp"
             android:layout_gravity="center_vertical"
             android:paddingHorizontal="16dp" />
 
@@ -102,7 +102,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:layout_marginHorizontal="24dp"
+            android:layout_marginHorizontal="16dp"
             android:text="@string/play_button"
             app:strokeColor="#9DC2D3" />
     </LinearLayout>

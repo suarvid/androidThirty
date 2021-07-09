@@ -4,12 +4,21 @@ import android.util.Log
 
 private const val TAG = "User"
 
+
+/**
+ * Class representing a User.
+ * The logic is responsible for score calculation as well as determining
+ * when the game is completed.
+ *
+ * @param name the name of the Player, currently not used.
+ */
 class User(val name: String = "Player") {
     var totalScore: Int = 0
     private var scores: HashMap<PlayOption, Int> = HashMap(10)
     var rollCount: Int = 0
-    private var playsLeft: Boolean =
-        false // Flag variable, is set to true if any play is possible with selected option
+
+    // Ugly class-wide variable to deal with recursion in score-counting
+    var scoreCounter = 0
 
     //this list is filled in PlayFragment's restorePlayOptions()
     // by using playOptionGoalSums() in this class
@@ -23,81 +32,156 @@ class User(val name: String = "Player") {
         rollCount = 0
     }
 
+    /**
+     * Function for calculating the score achieved with the supplied dice for the
+     * given play option.
+     * The calculation for play option LOW is much simpler than for the others
+     * and is therefore handled in a separate case.
+     *
+     * @param playOption the selected play option for the current play
+     * @param dice the dice used to calculate the score
+     *
+     */
+
     fun calculateScore(playOption: PlayOption, dice: List<Die>): Boolean {
 
-        playsLeft = false
         if (playOption == PlayOption.LOW) { // Edge case, easy to auto-compute, bit ugly though
             Log.d(TAG, "play option is Low")
             val lowScore = calculateLowScore(dice)
             totalScore += lowScore
             playOption.achievedScore += lowScore
+            setPlayedDice(dice)
         } else {
-            val sumSelected = calculateSumSelected(dice)
-            if (sumSelected == playOption.goalSum) {
-                totalScore += sumSelected
-                playOption.achievedScore += sumSelected
+            // Check if there are any valid combinations
+            var combinationsRemaining = false
+            if (areAnyPlays(playOption, dice)) {
+                combinationsRemaining = scoreCalculation(playOption, dice)
+            }
+
+            // Call scoreCalculation to handle one combination at a time
+            while (combinationsRemaining) {
+                Log.d(TAG, "Multiplier Value: $scoreCounter")
+                combinationsRemaining = scoreCalculation(playOption, dice)
+            }
+
+            // Add the sum of the play option for each valid combination
+            Log.d(TAG, "Final multiplier for option $playOption is $scoreCounter")
+            playOption.achievedScore = playOption.goalSum * scoreCounter
+            totalScore += playOption.achievedScore
+            // Reset the counter for the next option
+            scoreCounter = 0
+        }
+
+        // Save the score for the final score screen
+        scores[playOption] = playOption.achievedScore
+        resetThrowCount()
+        this.playOptions.remove(playOption)
+        Log.d(TAG, "No plays left for play option $playOption")
+
+        return true
+    }
+
+    /**
+     * Function which computes the score for the individual combinations.
+     * As a heuristic, selects the combination in increasing order of dice used.
+     * This is done in order to maximize the number of valid combinations to be used in the calculation.
+     * @param playOption option to calculate the score for
+     * @param dice the dice used in the calculation
+     */
+    // always select the shortest list, will consume the fewest dice
+    private fun scoreCalculation(playOption: PlayOption, dice: List<Die>): Boolean {
+        // Calculate all possible combinations that sum up to the play option value
+        val possibleCombinations = subsetSums(getPlayableValues(dice), playOption.goalSum, listOf())
+        Log.d(TAG, "Possible combinations found: $possibleCombinations")
+
+        // Some lists returned by subsetSums will be empty lists, make sure non-empty lists exist
+        if (!containsNonEmptyList(possibleCombinations)) {
+            Log.d(TAG, "Only Empty combinations remaining, return")
+            return false
+        }
+        // Select combinations in increasing order of number of dice used
+        val smallestComb = possibleCombinations[findShortestNonEmptyList(possibleCombinations)]
+        Log.d(TAG, "Smallest found combination is $smallestComb")
+        scoreCounter++
+
+
+        // find dice with matching values, set them to played and de-select them
+        smallestComb.forEach { value ->
+            val die = findDiceWithValue(value, dice)
+            Log.d(TAG, "Found die with value $value: $die")
+            if (die != null && !die.played) {
+                die.played = true
+                die.selected = false
+            } else {
+                return false
             }
         }
 
-        setPlayedDice(dice)
-        scores[playOption] = playOption.achievedScore
+        return true
+    }
 
-        arePlaysRemaining(dice, playOption)
+    // Function used to
+    private fun areAnyPlays(playOption: PlayOption, dice: List<Die>): Boolean {
+        return subsetSums(getPlayableValues(dice), playOption.goalSum, listOf()).isNotEmpty()
+    }
 
-        if (!playsLeft) {
-            // TODO: This should be done later, on re-roll
-            resetThrowCount() // Maybe this can stay
-            this.playOptions.remove(playOption)
-            Log.d(TAG, "No plays left for play option $playOption")
-            return true
+    // This should probably also check if each die has been played or not
+    private fun containsNonEmptyList(lists: MutableList<List<Int>>): Boolean {
+        for (list in lists) {
+            if (list.isNotEmpty()) {
+                return true
+            }
         }
+
         return false
     }
 
-
-    private fun arePlaysRemaining(
-        dice: List<Die>,
-        playOption: PlayOption
-    ) {
-        val playableValues = getPlayableValues(dice)
-        if (playOption == PlayOption.LOW) {
-            checkLowValues(playableValues)
-        } else {
-            // if empty, no plays left, i.e. move on
-            subsetSum(playableValues, playOption.goalSum, listOf()).isEmpty() //should do the trick
-        }
-    }
-
-    private fun checkLowValues(values: List<Int>) {
-        values.forEach {
-            if (it <= 3) {
-                playsLeft = true
+    private fun findDiceWithValue(value: Int, dice: List<Die>): Die? {
+        for (die in dice) {
+            if (die.face == value && !die.played && die.selected) {
+                return die
             }
         }
+
+        return null
     }
 
-    // For calculating possible combinations that yield the sought sum
-    // Based on top comment in https://stackoverflow.com/questions/4632322/finding-all-possible-combinations-of-numbers-to-reach-a-given-sum
-    private fun subsetSum(numbers: List<Int>, target: Int, partial: List<Int>): List<Int> {
-        Log.d(TAG, "subsetSum called")
-        val partialSums = mutableListOf<Int>()
+    private fun findShortestNonEmptyList(lists: List<List<Any>>): Int {
+        var minLength = Int.MAX_VALUE
+        var minIndex = 0
+        for (i in lists.indices) {
+            if (lists[i].size < minLength && lists[i].isNotEmpty()) {
+                minLength = lists[i].size
+                minIndex = i
+            }
+        }
+
+        return minIndex
+    }
+
+    private fun subsetSums(
+        numbers: List<Int>,
+        target: Int,
+        partial: List<Int>
+    ): MutableList<List<Int>> {
+        Log.d(TAG, "subsetSums called")
+        val partialSums = mutableListOf<List<Int>>()
         val partialSum = sum(partial)
 
         if (partialSum == target) {
             Log.d(TAG, "sum(${partial}) = $target")
-            partialSums.add(partialSum)
-            playsLeft = true
+            partialSums.add(partial)
         }
-
 
         for (i in numbers.indices) {
             val n = numbers[i]
             val remaining = numbers.slice(i + 1 until numbers.size)
-            partialSums.addAll(subsetSum(remaining, target, partial + n)) // to get flat list
+            partialSums.add(subsetSums(remaining, target, partial + n).flatten())
         }
 
         return partialSums
     }
+
 
     private fun sum(values: List<Int>): Int {
         var sum = 0
@@ -122,16 +206,6 @@ class User(val name: String = "Player") {
         return this.playOptions.isEmpty()
     }
 
-    private fun calculateSumSelected(dice: List<Die>): Int {
-        var runningSum = 0
-        for (die in dice) {
-            if (die.selected) {
-                runningSum += die.face
-                die.played = true
-            }
-        }
-        return runningSum
-    }
 
     private fun setPlayedDice(dice: List<Die>) {
         for (die in dice) {

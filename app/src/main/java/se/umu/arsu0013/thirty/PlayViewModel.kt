@@ -53,12 +53,22 @@ class PlayViewModel : ViewModel() {
     }
 
     fun calculateScore(playOption: PlayOption): Boolean {
-        if (user.calculateScore(playOption, dice)) {
+        if (user.calculateScore(playOption, getSelectedDice(dice))) {
             rollAll()
             resetPlayedDice()
             return true
         }
         return false
+    }
+
+    private fun getSelectedDice(dice: List<Die>): MutableList<Die> {
+        val selected = mutableListOf<Die>()
+        for (die in dice) {
+            if (die.selected) {
+                selected.add(die)
+            }
+        }
+        return selected
     }
 
 }

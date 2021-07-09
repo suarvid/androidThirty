@@ -16,8 +16,6 @@ class StartFragment : Fragment() {
     // callBack interface to communicate with hosting Activity
     interface StartCallbacks {
         fun onPlay()
-        fun onAbout()
-        fun onQuit()
     }
 
     private var callbacks: StartCallbacks? = null
@@ -57,9 +55,6 @@ class StartFragment : Fragment() {
     }
 
     private fun setOnClickListeners() {
-        binding.quitButton.setOnClickListener {
-            callbacks?.onQuit()
-        }
 
         binding.playStartButton.setOnClickListener {
             callbacks?.onPlay()

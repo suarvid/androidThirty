@@ -3,6 +3,7 @@ package se.umu.arsu0013.thirty
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import androidx.fragment.app.FragmentManager
 
 
 private const val TAG = "MainActivity"
@@ -22,7 +23,6 @@ class MainActivity : AppCompatActivity(), PlayFragment.PlayCallbacks, StartFragm
                 .commit()
         }
     }
-
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
@@ -50,14 +50,6 @@ class MainActivity : AppCompatActivity(), PlayFragment.PlayCallbacks, StartFragm
             .replace(R.id.fragment_container, fragment)
             .addToBackStack("play")
             .commit()
-    }
-
-    override fun onAbout() {
-        TODO("Not yet implemented")
-    }
-
-    override fun onQuit() {
-        finishAffinity()
     }
 
     override fun onGameOver(scores: HashMap<PlayOption, Int>, totalScore: Int) {
