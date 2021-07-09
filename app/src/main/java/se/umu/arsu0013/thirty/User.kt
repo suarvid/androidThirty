@@ -120,12 +120,12 @@ class User(val name: String = "Player") {
         return true
     }
 
-    // Function used to
+    // Function used to determine if it is possible to get any points with the selected play option
     private fun areAnyPlays(playOption: PlayOption, dice: List<Die>): Boolean {
         return subsetSums(getPlayableValues(dice), playOption.goalSum, listOf()).isNotEmpty()
     }
 
-    // This should probably also check if each die has been played or not
+    // Helper function to check if any non-empty combinations were returned from subsetSums
     private fun containsNonEmptyList(lists: MutableList<List<Int>>): Boolean {
         for (list in lists) {
             if (list.isNotEmpty()) {
@@ -136,6 +136,7 @@ class User(val name: String = "Player") {
         return false
     }
 
+    // Helper function for finding dice to de-select and mark as played
     private fun findDiceWithValue(value: Int, dice: List<Die>): Die? {
         for (die in dice) {
             if (die.face == value && !die.played && die.selected) {
@@ -146,6 +147,7 @@ class User(val name: String = "Player") {
         return null
     }
 
+    // Helper function, finds shortest list which is not empty
     private fun findShortestNonEmptyList(lists: List<List<Any>>): Int {
         var minLength = Int.MAX_VALUE
         var minIndex = 0
@@ -159,12 +161,20 @@ class User(val name: String = "Player") {
         return minIndex
     }
 
+    /**
+     * Recursive function which does most of the actual legwork in the score calculation.
+     * Based on a Python implementation found on stack overflow
+     * https://stackoverflow.com/questions/4632322/finding-all-possible-combinations-of-numbers-to-reach-a-given-sum
+     *
+     * @param numbers the list containing candidate numbers to be combined to the target sum
+     * @param target the target value numbers should sum up to
+     * @param partial the numbers being summed in the current call
+     */
     private fun subsetSums(
         numbers: List<Int>,
         target: Int,
         partial: List<Int>
     ): MutableList<List<Int>> {
-        Log.d(TAG, "subsetSums called")
         val partialSums = mutableListOf<List<Int>>()
         val partialSum = sum(partial)
 
@@ -176,6 +186,7 @@ class User(val name: String = "Player") {
         for (i in numbers.indices) {
             val n = numbers[i]
             val remaining = numbers.slice(i + 1 until numbers.size)
+            // recursive call
             partialSums.add(subsetSums(remaining, target, partial + n).flatten())
         }
 
@@ -183,6 +194,7 @@ class User(val name: String = "Player") {
     }
 
 
+    // Helper function, sums all numbers in a list
     private fun sum(values: List<Int>): Int {
         var sum = 0
         values.forEach { value ->
@@ -192,6 +204,11 @@ class User(val name: String = "Player") {
         return sum
     }
 
+    /**
+     * Helper function, returns the values of dice which are eligible for play.
+     *
+     * @param dice the list containing dice to be checked for playability
+     */
     private fun getPlayableValues(dice: List<Die>): MutableList<Int> {
         val values = mutableListOf<Int>()
         for (die in dice) {
@@ -207,6 +224,7 @@ class User(val name: String = "Player") {
     }
 
 
+    // Helper function, de-selects and marks played dice as having been played
     private fun setPlayedDice(dice: List<Die>) {
         for (die in dice) {
             if (die.selected) {
@@ -228,6 +246,11 @@ class User(val name: String = "Player") {
     }
 
 
+    /**
+     * Helper function which calculates the score for the play option LOW.
+     *
+     * @param dice the dice used to calculate the score
+     */
     private fun calculateLowScore(dice: List<Die>): Int {
         var sum = 0
         for (die in dice) {
@@ -238,6 +261,9 @@ class User(val name: String = "Player") {
         return sum
     }
 
+    /**
+     * Returns the sought after sum for each play option
+     */
     fun playOptionGoalSums(): List<Int> {
         return listOf(
             PlayOption.LOW.goalSum,

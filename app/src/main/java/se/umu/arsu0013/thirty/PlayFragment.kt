@@ -16,15 +16,17 @@ import se.umu.arsu0013.thirty.databinding.FragmentPlayBinding
 import kotlin.math.max
 
 private const val TAG = "PlayFragment"
-private const val ARG_TEST_VAL = "test_val"
+// Values used for storing and retrieving state
 private const val ARG_DIE_VAL_1 = "die_1"
 private const val ARG_DIE_VAL_2 = "die_2"
 private const val ARG_DIE_VAL_3 = "die_3"
 private const val ARG_DIE_VAL_4 = "die_4"
 private const val ARG_DIE_VAL_5 = "die_5"
 private const val ARG_DIE_VAL_6 = "die_6"
-private val ARG_DIE_VALS = listOf(ARG_DIE_VAL_1, ARG_DIE_VAL_2, ARG_DIE_VAL_3, ARG_DIE_VAL_4,
-    ARG_DIE_VAL_5, ARG_DIE_VAL_6)
+private val ARG_DIE_VALS = listOf(
+    ARG_DIE_VAL_1, ARG_DIE_VAL_2, ARG_DIE_VAL_3, ARG_DIE_VAL_4,
+    ARG_DIE_VAL_5, ARG_DIE_VAL_6
+)
 private const val ARG_ROLL_COUNT = "rolls_remaining"
 private const val ARG_TOTAL_SCORE = "total_score"
 private const val ARG_REMAINING_PLAY_OPTIONS = "play_options"
@@ -47,10 +49,14 @@ class PlayFragment : Fragment(), AdapterView.OnItemSelectedListener {
     private val playViewModel: PlayViewModel by lazy {
         ViewModelProvider(this).get(PlayViewModel::class.java)
     }
+
+    // list of Die objects stored in the viewModel
     private var modelDice: List<Die>? = null
+    // list of dice bindings in the layout
     private var bindingDice: List<ImageButton>? = null
+    // combination of the above lists, simplifies setting onClickListeners, updating values etc.
     private var dicePairs: List<Pair<Die, ImageButton>>? = null
-        //modelDice.zip(bindingDice!!)
+
 
     companion object {
         fun newInstance(): PlayFragment {
@@ -74,7 +80,6 @@ class PlayFragment : Fragment(), AdapterView.OnItemSelectedListener {
     }
 
 
-    //TODO: check if anything should be moved to onCreate instead
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -84,8 +89,10 @@ class PlayFragment : Fragment(), AdapterView.OnItemSelectedListener {
         val view = binding.root
 
         binding.playSelectSpinner.onItemSelectedListener = this
-        bindingDice = listOf(binding.diceVal0, binding.diceVal1, binding.diceVal2,
-            binding.diceVal3, binding.diceVal4, binding.diceVal5)
+        bindingDice = listOf(
+            binding.diceVal0, binding.diceVal1, binding.diceVal2,
+            binding.diceVal3, binding.diceVal4, binding.diceVal5
+        )
         modelDice = playViewModel.dice
         dicePairs = modelDice!!.zip(bindingDice!!)
 
@@ -107,19 +114,8 @@ class PlayFragment : Fragment(), AdapterView.OnItemSelectedListener {
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         Log.d(TAG, "onSaveInstanceState called")
-        outState.putInt(ARG_TEST_VAL, 1337)
-        outState.putSerializable(ARG_TEST_VAL, Pair(1, 1))
 
         saveDiceState(outState)
-        /*
-        outState.putInt(ARG_DIE_VAL_1, playViewModel.dice[0].face)
-        outState.putInt(ARG_DIE_VAL_2, playViewModel.dice[1].face)
-        outState.putInt(ARG_DIE_VAL_3, playViewModel.dice[2].face)
-        outState.putInt(ARG_DIE_VAL_4, playViewModel.dice[3].face)
-        outState.putInt(ARG_DIE_VAL_5, playViewModel.dice[4].face)
-        outState.putInt(ARG_DIE_VAL_6, playViewModel.dice[5].face)
-         */
-
         outState.putInt(ARG_TOTAL_SCORE, playViewModel.user.totalScore)
         outState.putInt(ARG_ROLL_COUNT, playViewModel.user.rollCount)
 
@@ -133,14 +129,17 @@ class PlayFragment : Fragment(), AdapterView.OnItemSelectedListener {
 
     private fun saveDiceState(outState: Bundle) {
         for (pair in modelDice?.zip(ARG_DIE_VALS)!!) {
-            outState.putSerializable(pair.second, Triple(pair.first.face, pair.first.selected, pair.first.played))
+            outState.putSerializable(
+                pair.second,
+                Triple(pair.first.face, pair.first.selected, pair.first.played)
+            )
         }
     }
 
     override fun onViewStateRestored(savedInstanceState: Bundle?) {
         super.onViewStateRestored(savedInstanceState)
         Log.d(TAG, "onViewStateRestored called")
-        val testInt = savedInstanceState?.getInt(ARG_TEST_VAL)
+
         restoreDiceValues(savedInstanceState)
         restorePlayOptions(savedInstanceState)
         playViewModel.user.totalScore = savedInstanceState?.getInt(ARG_TOTAL_SCORE) ?: 0
@@ -150,13 +149,10 @@ class PlayFragment : Fragment(), AdapterView.OnItemSelectedListener {
         updateDiceColors()
         updateCurrentScore()
         updateRemainingRolls()
-        Log.d(TAG, "Retrieved Int with value $testInt")
     }
 
     // Restore the remaining play options based on the saved goal sums
     private fun restorePlayOptions(savedInstanceState: Bundle?) {
-        // the if-null value here overrides the initialization in User
-        // so there are two "sources of truth" for this, which is bad
         val playOptionValues =
             savedInstanceState?.getIntegerArrayList(ARG_REMAINING_PLAY_OPTIONS)
                 ?: playViewModel.user.playOptionGoalSums()
@@ -180,30 +176,13 @@ class PlayFragment : Fragment(), AdapterView.OnItemSelectedListener {
 
     private fun restoreDiceValues(savedInstanceState: Bundle?) {
         for (pair in modelDice?.zip(ARG_DIE_VALS)!!) {
-            val triple = savedInstanceState?.getSerializable(pair.second) as Triple<Int, Boolean, Boolean>?
+            val triple =
+                savedInstanceState?.getSerializable(pair.second) as Triple<Int, Boolean, Boolean>?
             pair.first.face = triple?.first ?: (1..6).random()
             pair.first.selected = triple?.second ?: false
             pair.first.played = triple?.third ?: false
         }
     }
-    /*
-    private fun restoreDiceValues(savedInstanceState: Bundle?) {
-        this.playViewModel.dice[0].face =
-            savedInstanceState?.getInt(ARG_DIE_VAL_1) ?: (1..6).random()
-        this.playViewModel.dice[1].face =
-            savedInstanceState?.getInt(ARG_DIE_VAL_2) ?: (1..6).random()
-        this.playViewModel.dice[2].face =
-            savedInstanceState?.getInt(ARG_DIE_VAL_3) ?: (1..6).random()
-        this.playViewModel.dice[3].face =
-            savedInstanceState?.getInt(ARG_DIE_VAL_4) ?: (1..6).random()
-        this.playViewModel.dice[4].face =
-            savedInstanceState?.getInt(ARG_DIE_VAL_5) ?: (1..6).random()
-        this.playViewModel.dice[5].face =
-            savedInstanceState?.getInt(ARG_DIE_VAL_6) ?: (1..6).random()
-    }
-
-     */
-
 
     private fun updateDiceValues() {
         for (pair in dicePairs!!) {
@@ -235,7 +214,9 @@ class PlayFragment : Fragment(), AdapterView.OnItemSelectedListener {
     }
 
 
+
     private fun setOnClickListeners() {
+        // Iterate through pairs of die objects and corresponding binding in the layout
         for (pair in dicePairs!!) {
             pair.second.setOnClickListener {
                 playViewModel.toggleSelect(pair.first)
